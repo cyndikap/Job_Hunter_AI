@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List
 
+from app.config import settings
 from app.services.smtp_service import SMTPEmailService
 
 DEFAULT_EMAIL = "kapnangcynthia@gmail.com"
-EMAIL_THRESHOLD = 85
+EMAIL_THRESHOLD = 80
 
 
 class AlertService:
@@ -18,13 +19,23 @@ class AlertService:
     def mark_sent(self, job_url: str) -> None:
         self.sent_urls.add(job_url)
 
+    def resolve_job_url(self, job: Dict[str, object]) -> str:
+        url = str(job.get("url") or "").strip()
+        if url and "example.com" not in url:
+            return url
+
+        slug = str(job.get("id") or job.get("title") or "job").lower()
+        slug = "".join(ch if ch.isalnum() or ch in "-_" else "-" for ch in slug)
+        slug = slug.strip("-") or "job"
+        return f"{settings.app_base_url}/jobs/{slug}"
+
     def build_email(self, job: Dict[str, object]) -> str:
         title = job.get("title", "Offre détectée")
         company = job.get("company", "-")
         location = job.get("location", "-")
         score = job.get("match_score", 0)
         skills = ", ".join(job.get("skills", []))
-        url = job.get("url", "")
+        url = self.resolve_job_url(job)
 
         return (
             "Offre détectée\n"
@@ -55,7 +66,7 @@ class AlertService:
         title = job.get("title", "Offre")
         company = job.get("company", "entreprise")
         score = job.get("match_score", 0)
-        url = job.get("url", "")
+        url = self.resolve_job_url(job)
         return (
             "Bonjour,\n\n"
             f"Je suis très intéressé(e) par l’offre {title} chez {company}.\n"
@@ -94,6 +105,6 @@ class AlertService:
             "to": DEFAULT_EMAIL,
             "subject": f"Job Hunter AI - {job.get('title', 'Nouvelle opportunité')}",
             "body": self.build_email(job),
-            "generated_at": datetime.utcnow().isoformat(),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
             "smtp_result": smtp_result,
         }

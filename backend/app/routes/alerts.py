@@ -1,9 +1,11 @@
 from fastapi import APIRouter
 
 from app.services.alerting import AlertService
+from app.services.imap_service import IMAPEmailService
 
 router = APIRouter(prefix="/alerts", tags=["alerts"])
 alert_service = AlertService()
+imap_service = IMAPEmailService()
 
 
 @router.post("/check")
@@ -29,3 +31,8 @@ def linkedin_generated(job: dict):
 @router.post("/flow")
 def plain_text_flow(job: dict):
     return {"status": "ok", "flow": alert_service.build_plain_text_flow(job)}
+
+
+@router.post("/imap-classify")
+def imap_classify(message: dict):
+    return {"status": "ok", "classification": imap_service.classify_message(message)}

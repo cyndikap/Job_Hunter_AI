@@ -1,86 +1,45 @@
 from fastapi import APIRouter
 
-from app.services.alerting import AlertService
-from app.services.job_matcher import score_job
-from app.services.openai_agent import AIJobAssistant
+from app.services.brevo import brevo_service
+from app.services.matching import match_engine
+from app.services.scanning import scan_service
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
-alert_service = AlertService()
-assistant = AIJobAssistant()
-
-PROFILE_JOB_EXAMPLES = [
-    {
-        "id": 1,
-        "title": "AI Engineer",
-        "company": "Ippon Technologies",
-        "location": "Paris / Remote",
-        "match_score": 92,
-        "classification": "Très forte adéquation",
-        "skills": ["Azure Databricks", "LLM", "RAG", "MLflow", "Python"],
-        "url": "https://example.com/job/1",
-    },
-    {
-        "id": 2,
-        "title": "Data & AI Engineer",
-        "company": "Capgemini",
-        "location": "Paris",
-        "match_score": 88,
-        "classification": "Forte adéquation",
-        "skills": ["Azure", "Python", "SQL", "Data Governance", "FastAPI"],
-        "url": "https://example.com/job/2",
-    },
-]
 
 
 @router.get("/sample")
 def get_sample_jobs():
-    return {"jobs": PROFILE_JOB_EXAMPLES}
+    jobs = []
+    for source in scan_service.sources:
+        jobs.extend(source.fetch_jobs())
+    return {"jobs": jobs}
 
 
 @router.post("/scan")
-def trigger_scan():
-    return {
-        "status": "accepted",
-        "message": "Le scan des offres a été déclenché.",
-    }
+async def trigger_scan():
+    return scan_service.scan()
 
 
 @router.post("/match")
-def match_job(job: dict):
-    skills = job.get("skills", [])
-    result = score_job(
-        title=job.get("title", ""),
-        company=job.get("company", ""),
-        skills=skills,
-        location=job.get("location", ""),
-    )
-
-    outcome = {
+async def match_job(job: dict):
+    result = match_engine.calculate(job)
+    return {
         "title": job.get("title", ""),
         "company": job.get("company", ""),
         "location": job.get("location", ""),
-        "match_score": result["score"],
-        "classification": result["classification"],
-        "skills": skills,
-        "summary": assistant.summarize_job(
-            job.get("title", ""),
-            job.get("company", ""),
-            job.get("description", "Poste orienté IA, données et Azure."),
-        ),
-        "email": assistant.build_email(job),
-        "linkedin_message": assistant.build_linkedin_message(job),
-        "alert_triggered": result["score"] >= 85,
+        "match": result,
     }
 
-    if outcome["alert_triggered"]:
-        alert = alert_service.send_email({
-            "title": outcome["title"],
-            "company": outcome["company"],
-            "location": outcome["location"],
-            "match_score": outcome["match_score"],
-            "skills": outcome["skills"],
-            "url": job.get("url", ""),
-        })
-        outcome["alert_result"] = alert
 
-    return outcome
+@router.post("/alert")
+async def send_alert(payload: dict):
+    match = match_engine.calculate(payload)
+    alert_payload = {
+        "title": payload.get("title", ""),
+        "company": payload.get("company", ""),
+        "score": round(match["score_overall"], 2),
+        "common_skills": match.get("common_skills", []),
+        "url": payload.get("url", "#"),
+    }
+    email_response = await brevo_service.send_alert(alert_payload)
+    return {"status": "ok", "email": email_response}

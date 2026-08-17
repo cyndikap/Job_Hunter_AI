@@ -1,13 +1,29 @@
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, Numeric, String, Text
+import uuid
+from datetime import datetime, timezone
+
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, Numeric, String, Text, Uuid
 from sqlalchemy.orm import relationship
 
 from app.database import Base
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    email = Column(String(255), nullable=False, unique=True, index=True)
+    full_name = Column(String(255), nullable=True)
+    avatar_url = Column(Text, nullable=True)
+    status = Column(String(50), default="active")
+    created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
 class CandidateProfile(Base):
     __tablename__ = "candidate_profile"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Uuid(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     full_name = Column(String(255), nullable=False)
     target_title = Column(String(255), nullable=False)
     location_preference = Column(String(255), default="Île-de-France")
@@ -31,6 +47,7 @@ class JobOffer(Base):
     __tablename__ = "job_offer"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Uuid(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     source_id = Column(Integer, ForeignKey("job_source.id"))
     external_id = Column(String(255))
     title = Column(String(255), nullable=False)
@@ -58,6 +75,7 @@ class JobMatch(Base):
     __tablename__ = "job_match"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Uuid(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     job_offer_id = Column(Integer, ForeignKey("job_offer.id", ondelete="CASCADE"))
     candidate_id = Column(Integer, ForeignKey("candidate_profile.id"))
     match_score = Column(Integer, nullable=False)
@@ -74,6 +92,7 @@ class EmailLog(Base):
     __tablename__ = "email_log"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Uuid(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     job_offer_id = Column(Integer, ForeignKey("job_offer.id"))
     to_email = Column(String(255), nullable=False)
     subject = Column(String(255))
@@ -85,6 +104,7 @@ class ApplicationTracking(Base):
     __tablename__ = "application_tracking"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Uuid(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     job_offer_id = Column(Integer, ForeignKey("job_offer.id"))
     company = Column(String(255))
     status = Column(String(50), default="new")
@@ -95,3 +115,15 @@ class ApplicationTracking(Base):
     linkedin_message = Column(Text)
     cover_letter = Column(Text)
     notes = Column(Text)
+
+
+class ConversationTurn(Base):
+    __tablename__ = "conversation_turn"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Uuid(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    question = Column(Text, nullable=False)
+    answer = Column(Text, nullable=False)
+    provider = Column(String(50), default="unknown")
+    context_documents = Column(Text, default="[]")
+    created_at = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))

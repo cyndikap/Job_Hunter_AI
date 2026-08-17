@@ -1,7 +1,30 @@
+.app-shell {
+  min-height: 100vh;
+}
+
+.main-nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  text-decoration: none;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #e2e8f0;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
 .page-shell {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px 24px 60px;
+  padding: 24px 24px 60px;
   font-family: Inter, system-ui, sans-serif;
   color: #e5eefb;
 }
@@ -11,6 +34,97 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  gap: 16px;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.auth-panel {
+  margin-top: 24px;
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+  max-width: 420px;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 8px;
+  color: #dbeafe;
+  font-weight: 600;
+}
+
+.auth-form input,
+.chat-composer textarea {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.75);
+  color: #f8fbff;
+  padding: 12px 14px;
+  box-sizing: border-box;
+  font: inherit;
+}
+
+.chat-panel {
+  margin-top: 28px;
+}
+
+.chat-thread {
+  display: grid;
+  gap: 12px;
+  max-height: 420px;
+  overflow-y: auto;
+  margin-bottom: 18px;
+}
+
+.chat-bubble {
+  max-width: 78%;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(30, 41, 59, 0.7);
+}
+
+.chat-bubble.user {
+  margin-left: auto;
+  background: rgba(59, 130, 246, 0.18);
+}
+
+.chat-bubble.assistant {
+  margin-right: auto;
+}
+
+.chat-bubble p {
+  margin: 8px 0 0;
+  color: #e2e8f0;
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+.chat-bubble small {
+  color: #93c5fd;
+}
+
+.bubble-role {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a5b4cf;
+}
+
+.chat-composer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: end;
 }
 
 .eyebrow {
@@ -27,14 +141,30 @@
   color: #f8fbff;
 }
 
-.primary-button {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  color: white;
+.primary-button,
+.secondary-button {
   border: none;
   padding: 12px 20px;
   border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: white;
+}
+
+.secondary-button {
+  background: rgba(148, 163, 184, 0.12);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .stats-grid {
@@ -86,6 +216,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 18px;
+  gap: 12px;
 }
 
 .panel-header h2 {
@@ -145,6 +276,24 @@
   font-weight: 700;
 }
 
+.score-badge.excellent {
+  background: rgba(34, 197, 94, 0.18);
+  color: #86efac;
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.score-badge.good {
+  background: rgba(250, 204, 21, 0.15);
+  color: #facc15;
+  border-color: rgba(250, 204, 21, 0.2);
+}
+
+.score-badge.review {
+  background: rgba(248, 113, 113, 0.15);
+  color: #fca5a5;
+  border-color: rgba(248, 113, 113, 0.2);
+}
+
 .skills-row {
   margin-top: 14px;
   display: flex;
@@ -159,6 +308,51 @@
   border-radius: 999px;
   padding: 6px 10px;
   font-size: 0.8rem;
+}
+
+.linkedin-box {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.linkedin-box p {
+  margin: 0;
+  color: #e2e8f0;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.linkedin-meta {
+  margin-top: 12px;
+  color: #a5b4cf;
+  font-size: 0.82rem;
+}
+
+.linkedin-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.status-box {
+  padding: 14px 16px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  color: #e2e8f0;
+}
+
+.error-box {
+  border-color: rgba(248, 113, 113, 0.45);
+  color: #fecaca;
+  background: rgba(127, 29, 29, 0.2);
+}
+
+.opportunity-footer {
+  margin-top: 12px;
 }
 
 .table-wrap {

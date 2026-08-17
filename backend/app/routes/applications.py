@@ -9,7 +9,7 @@ APPLICATIONS = [
         "company": "Ippon Technologies",
         "status": "Email envoyé",
         "score": 92,
-        "link": "https://example.com/job/1",
+        "link": "http://localhost:3000/jobs/1",
     },
     {
         "id": 2,
@@ -17,7 +17,7 @@ APPLICATIONS = [
         "status": "En attente",
         "score": 88,
         "date": "2026-08-14",
-        "link": "https://example.com/job/2",
+        "link": "http://localhost:3000/jobs/2",
     },
 ]
 
