@@ -6,3 +6,17 @@
 .env\
 *.db
 jobhunter.db
+.venv/
+**/.venv/
+node_modules/
+**/node_modules/
+frontend/node_modules/
+frontend-app/node_modules/
+backend/.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.jobhunter/
+.DS_Store
