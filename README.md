@@ -1,4 +1,4 @@
-# 🚀 Job Hunter AI
+# Job Hunter AI
 
 Agent IA personnel de veille emploi spécialisé Data, IA, Cloud et Azure.
 
@@ -22,7 +22,7 @@ Détecter, filtrer, noter et notifier automatiquement les offres d'emploi corres
 
 ## Vue d'ensemble
 
-Le système collecte les offres depuis plusieurs sources, les normalise, les enrichit par IA, calcule un score de matching avec le CV, puis déclenche des alertes et prépare des éléments de candidature (résumé, email, message LinkedIn, lettre de motivation et suivi). 
+Le système collecte les offres depuis plusieurs sources, les normalise, les enrichit par IA, calcule un score de matching avec le CV, puis déclenche des alertes et prépare des éléments de candidature (résumé, email, message LinkedIn, lettre de motivation et suivi).
 
 ### Principales fonctionnalités
 
@@ -47,7 +47,7 @@ Le projet suit une architecture modulaire en 5 couches :
 
 ## Stack technique recommandée
 
-- Frontend : Streamlit
+- Frontend : React + Vite
 - Backend : FastAPI
 - LLM : Azure OpenAI
 - Base de données : PostgreSQL
@@ -60,7 +60,7 @@ Le projet suit une architecture modulaire en 5 couches :
 1. Copier les variables d'environnement depuis le fichier de configuration fourni dans le dépôt.
 2. Lancer la pile locale avec Docker Compose.
 3. Démarrer l’API FastAPI.
-4. Démarrer le dashboard Streamlit.
+4. Démarrer le dashboard React.
 5. Vérifier la collecte et le scoring sur un jeu de données d’exemple.
 
 ## Portée MVP (1 semaine)
